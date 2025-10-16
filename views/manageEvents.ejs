@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Events</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1976D2;
+      --primary-dark: #0D47A1;
+      --accent: #FFC107;
+      --white: #ffffff;
+      --light: #f4f6f9;
+      --text-dark: #212121;
+      --text-light: #757575;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+      --danger: #e53935;
+      --success: #2e7d32;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      padding: 20px;
+    }
+
+    h3 {
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+    }
+
+    .card {
+      background: var(--white);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.6s ease;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 0.95rem;
+    }
+
+    thead {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    tbody tr:hover {
+      background: #f1f8ff;
+      transition: var(--transition);
+    }
+
+    /* Actions */
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-edit {
+      background: var(--primary);
+      color: var(--white);
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: var(--transition);
+      font-size: 0.9rem;
+    }
+
+    .btn-edit:hover {
+      background: var(--primary-dark);
+      box-shadow: 0 4px 10px rgba(25, 118, 210, 0.3);
+    }
+
+    .btn-delete {
+      background: var(--danger);
+      color: var(--white);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .btn-delete:hover {
+      background: #c62828;
+      box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3);
+    }
+
+    /* 🎯 Performance Box */
+    .performance-box {
+      background: #fff;
+      padding: 12px 14px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 160px;
+      text-align: left;
+      transition: 0.3s ease;
+    }
+
+    .performance-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .performance-box p {
+      margin: 0;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .metric-label {
+      font-weight: 600;
+      margin-right: 5px;
+    }
+
+    .total-label { color: #333; }
+    .approved-label { color: #2e7d32; }
+    .rejected-label { color: #c62828; }
+
+    /* ✅ Progress Bars */
+    .progress {
+      height: 6px;
+      background: #eee;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+    .progress-bar { height: 100%; transition: width 0.6s ease; }
+    .progress-approved { background: #43A047; }
+    .progress-rejected { background: #E53935; }
+
+    /* 🎯 Event status tags */
+    .tag-upcoming {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--success);
+      border-radius: 12px;
+    }
+    .tag-completed {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--danger);
+      border-radius: 12px;
+    }
+
+    /* Section breakdown */
+    .section-breakdown {
+      margin-top: 10px;
+      padding: 8px;
+      background: #f9f9f9;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+    .section-breakdown h5 {
+      margin: 4px 0;
+      font-size: 0.9rem;
+      color: var(--primary-dark);
+    }
+    .section-breakdown ul {
+      margin: 0;
+      padding-left: 16px;
+      list-style: disc;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+  <h3>📅 Manage Events</h3>
+  <hr>
+
+  <div class="card">
+    <% if(events.length===0) { %>
+      <p>No events available to manage.</p>
+    <% } else { %>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Capacity</th>
+              <th>Status & Performance</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% events.forEach(event=> { %>
+              <tr>
+                <td><%= event.title %></td>
+                <td><%= new Date(event.date).toDateString() %></td>
+                <td><%= event.location %></td>
+                <td><%= event.capacity %></td>
+                <td>
+                  <!-- Event Status -->
+                  <% if(event.isCompleted) { %>
+                    <span class="tag-completed">Completed</span>
+                  <% } else { %>
+                    <span class="tag-upcoming">Upcoming</span>
+                  <% } %>
+
+                  <!-- Performance Box -->
+                  <div class="performance-box">
+                    <p><span class="metric-label total-label">👥 Total:</span> <%= event.totalRegistrations %></p>
+                    <p><span class="metric-label approved-label">✅ Approved:</span> <%= event.approvedPct %>% (<%= event.approvedCount %>)</p>
+                    <div class="progress">
+                      <div class="progress-bar progress-approved" style="width:<%= event.approvedPct %>%"></div>
+                    </div>
+                    <p><span class="metric-label rejected-label">❌ Rejected:</span> <%= event.rejectedPct %>% (<%= event.rejectedCount %>)</p>
+                    <div class="progress">
+                      <div class="progress-bar progress-rejected" style="width:<%= event.rejectedPct %>%"></div>
+                    </div>
+                  </div>
+
+                  <!-- Section breakdown only for completed events -->
+                  <% if(event.isCompleted) { %>
+                    <div class="section-breakdown">
+                      <h5>📊 Section Participation</h5>
+                      <ul>
+                        <% Object.keys(event.sectionCounts||{}).forEach(sec=> { %>
+                          <li><strong><%= sec %></strong>: <%= event.sectionCounts[sec] %></li>
+                        <% }) %>
+                      </ul>
+                    </div>
+                  <% } %>
+                </td>
+
+                <td>
+                  <div class="actions">
+                    <a href="/editEvent/<%= event._id %>" class="btn-edit">✏️ Edit</a>
+                    <form action="/deleteEvent/<%= event._id %>" method="POST" onsubmit="return confirm('Delete this event?');">
+                      <button type="submit" class="btn-delete">🗑 Delete</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Event</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary:#1976D2;
+      --primary-dark:#0D47A1;
+      --accent:#FFC107;
+      --white:#ffffff;
+      --bg:#f4f6f9;
+      --shadow:0 8px 24px rgba(0,0,0,.12);
+      --transition: all .3s ease;
+      --text:#212121;
+      --muted:#757575;
+    }
+
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:'Poppins',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      padding:24px;
+    }
+
+    .wrapper{
+      max-width: 980px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      animation: fadeIn .6s ease;
+    }
+
+    .header{
+      background: linear-gradient(90deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      padding:20px 24px;
+    }
+    .header h2{
+      margin:0;
+      font-size:1.4rem;
+      font-weight:600;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .content{
+      padding: 24px;
+    }
+
+    /* Grid: form left, preview right */
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 24px;
+    }
+    @media(max-width:900px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    /* Form styles */
+    form label{
+      display:block;
+      font-weight:600;
+      margin: 12px 0 6px;
+      color: var(--primary-dark);
+    }
+    form input[type="text"],
+    form input[type="date"],
+    form input[type="number"],
+    form textarea,
+    form input[type="file"]{
+      width:100%;
+      padding:12px;
+      border:1px solid #dadde3;
+      border-radius:10px;
+      background:#fafafa;
+      font-size:.95rem;
+      transition: var(--transition);
+    }
+    form textarea{ min-height:120px; resize: vertical; }
+
+    form input:focus,
+    form textarea:focus{
+      outline:none;
+      background:#fff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(25,118,210,.15);
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media(max-width:700px){ .row{ grid-template-columns: 1fr; } }
+
+    .btns{
+      margin-top: 18px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    button[type="submit"]{
+      background: var(--primary);
+      color:#fff;
+      border:none;
+      padding:12px 18px;
+      border-radius: 10px;
+      font-weight:600;
+      cursor:pointer;
+      transition: var(--transition);
+    }
+    button[type="submit"]:hover{
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(0,0,0,.15);
+    }
+    .btn-secondary{
+      background:#eef3fb;
+      color: var(--primary-dark);
+      text-decoration: none;
+      padding:12px 16px;
+      border-radius:10px;
+      font-weight:600;
+      transition: var(--transition);
+      display:inline-block;
+    }
+    .btn-secondary:hover{
+      background:#e2ecfa;
+      transform: translateY(-2px);
+    }
+
+    /* Preview card */
+    .preview{
+      background:#fbfcfe;
+      border:1px dashed #cfd8e3;
+      border-radius:12px;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      gap:12px;
+      min-height: 280px;
+    }
+    .preview h4{
+      margin:0; font-size:1rem; color:#3f4a5a; font-weight:600;
+    }
+    .preview img{
+      width:100%;
+      max-height:300px;
+      object-fit:cover;
+      border-radius:10px;
+      box-shadow: 0 6px 16px rgba(0,0,0,.15);
+      background:#fff;
+    }
+    .hint{
+      font-size:.85rem; color:var(--muted); text-align:center;
+    }
+
+    /* Current image small badge */
+    .current-file{
+      font-size:.85rem;
+      color:#4b5563;
+      background:#eef2ff;
+      border:1px solid #e0e7ff;
+      padding:6px 10px;
+      border-radius:8px;
+    }
+
+    @keyframes fadeIn{
+      from{ opacity:0; transform: translateY(8px); }
+      to{ opacity:1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <div class="header">
+      <h2>✏️ Edit Event</h2>
+    </div>
+
+    <div class="content">
+      <div class="grid">
+        <!-- Left: Form -->
+        <form action="/editEvent/<%= event._id %>" method="post" enctype="multipart/form-data">
+          <label>Title:</label>
+          <input type="text" name="title" value="<%= event.title %>" required>
+
+          <label>Description:</label>
+          <textarea name="description" required><%= event.description %></textarea>
+
+          <div class="row">
+            <div>
+              <label>Date:</label>
+              <input type="date" name="date" value="<%= event.date.toISOString().split('T')[0] %>" required>
+            </div>
+            <div>
+              <label>Capacity:</label>
+              <input type="number" name="capacity" value="<%= event.capacity %>" required min="1">
+            </div>
+          </div>
+
+          <label>Location:</label>
+          <input type="text" name="location" value="<%= event.location %>" required>
+
+          <label>Poster:</label>
+          <input type="file" name="poster" accept="image/*">
+
+          <div class="btns">
+            <button type="submit">Update Event</button>
+            <a href="/dashboard?page=manage" class="btn-secondary">Cancel</a>
+          </div>
+        </form>
+
+        <!-- Right: Live Preview -->
+        <div class="preview">
+          <h4>Poster Preview</h4>
+
+          <% if(event.poster) { %>
+            <span class="current-file">Current: <%= event.poster %></span>
+          <% } %>
+
+          <img id="posterPreview" 
+               src="<%= event.poster ? ('/uploads/' + event.poster) : 'https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=900&q=60' %>" 
+               alt="Event Poster">
+          <div class="hint">Choose a new image to preview it here before saving.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tiny JS: live preview of poster without changing any field names
+    document.addEventListener('DOMContentLoaded', () => {
+      const fileInput = document.querySelector('input[name="poster"]');
+      const previewImg = document.getElementById('posterPreview');
+
+      if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+          const url = URL.createObjectURL(file);
+          previewImg.src = url;
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>
