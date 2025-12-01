@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1976D2;
+      --primary-dark: #0D47A1;
+      --accent: #FFC107;
+      --white: #ffffff;
+      --light: #f4f6f9;
+      --text-dark: #212121;
+      --text-light: #757575;
+      --shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+      --danger: #e53935;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      margin: 0;
+      padding: 20px;
+      color: var(--text-dark);
+    }
+
+    h3 {
+      color: var(--primary-dark);
+      text-align: center;
+      margin: 10px 0;
+      font-weight: 600;
+    }
+
+    hr {
+      border: none;
+      border-bottom: 2px solid var(--primary);
+      width: 60px;
+      margin: 0 auto 20px;
+    }
+
+    .card {
+      background: var(--white);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.6s ease;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      min-width: 700px; /* prevents columns from squashing */
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 0.95rem;
+      table-layout: fixed;
+    }
+
+    thead {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+      vertical-align: middle;
+      word-break: break-word;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    tbody tr:hover {
+      background: #f1f8ff;
+      transition: var(--transition);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .action-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    .edit-btn:hover {
+      background: var(--primary-dark);
+      box-shadow: 0 4px 10px rgba(25, 118, 210, 0.3);
+    }
+
+    .delete-btn {
+      background: var(--danger);
+      color: var(--white);
+    }
+
+    .delete-btn:hover {
+      background: #c62828;
+      box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3);
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 900px) {
+      .card {
+        padding: 20px;
+      }
+
+      table {
+        font-size: 0.9rem;
+        min-width: 600px;
+      }
+
+      th, td {
+        padding: 10px 8px;
+      }
+
+      .action-btn {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      h3 {
+        font-size: 1.3rem;
+      }
+
+      table {
+        font-size: 0.85rem;
+        min-width: 550px;
+      }
+
+      th, td {
+        padding: 8px 6px;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <h3>👨‍🎓 Registered Students</h3>
+  <hr>
+
+  <div class="card">
+    <% if (students.length === 0) { %>
+      <p>No students have registered yet.</p>
+    <% } else { %>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>👤 Name</th>
+              <th>📧 Email</th>
+              <th>🔑 Password</th>
+              <th>🏷️ Section</th>
+              <th>⚙️ Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% students.forEach(student => { %>
+              <tr>
+                <td><%= student.name %></td>
+                <td><%= student.email %></td>
+                <td><%= student.password %></td>
+                <td><%= student.section %></td>
+                <td>
+                  <div class="actions">
+                    <a href="/students/edit/<%= student._id %>" class="action-btn edit-btn">✏️ Edit</a>
+                    <form action="/students/delete/<%= student._id %>" method="POST" style="display:inline;">
+                      <button type="submit" class="action-btn delete-btn">🗑 Delete</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>

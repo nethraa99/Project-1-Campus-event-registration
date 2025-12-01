@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Login</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #1976D2;
+      --primary-dark: #0d47a1;
+      --accent: #FFD700;
+      --bg: #f5f6fa;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      height: 100vh;
+      background: linear-gradient(135deg, #0d47a1 30%, #1e88e5 100%);
+      color: #fff;
+    }
+
+    /* ========= Left Quote ========= */
+    .split-left {
+      flex: 1.2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 50px;
+    }
+
+    .quote-box {
+      max-width: 450px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      line-height: 1.4;
+      border-left: 5px solid var(--accent);
+      padding-left: 20px;
+    }
+
+    /* Typing effect JUST for Success */
+    .typing {
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 3px solid var(--accent);
+      width: 0;
+      color: var(--accent);
+      animation: typing 1.5s steps(7, end) forwards, blink 0.7s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to   { width: 105px } /* adjust width for "Success" */
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+
+    /* The rest of the quote appears below “Success” after it finishes typing */
+    .sub-quote {
+      opacity: 0;
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #fdfdfd;
+      margin-top: 10px;
+      animation: fadeIn 1s ease forwards;
+      animation-delay: 1.6s; /* shows after typing completes */
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px) }
+      to   { opacity: 1; transform: translateY(0) }
+    }
+
+    /* ========= Right Form ========= */
+    .split-right {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: rgba(255,255,255,0.95);
+      color: #333;
+      padding: 50px 40px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    }
+
+    .login-card h2 {
+      text-align: center;
+      color: var(--primary-dark);
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: all 0.2s;
+    }
+    .login-card input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 8px rgba(25,118,210,0.4);
+      outline: none;
+    }
+
+    .login-card button {
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.25s;
+      width: 100%;
+    }
+    .login-card button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+
+    .login-card a {
+      display: block;
+      margin-top: 10px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--primary-dark);
+      text-decoration: none;
+    }
+    .login-card a:hover { text-decoration: underline; }
+
+    .footer-quote {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #666;
+      font-style: italic;
+    }
+
+    /* Responsive */
+    @media(max-width: 900px) {
+      body { flex-direction: column; }
+      .quote-box { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Left Creative Quote -->
+  <div class="split-left">
+    <div class="quote-box">
+      <span class="typing">Success</span>
+      <div class="sub-quote">
+        doesn’t come to you,<br>
+        you go to it. Stay consistent 🚀
+      </div>
+    </div>
+  </div>
+
+  <!-- Right (Login Form) -->
+  <div class="split-right">
+    <div class="login-card">
+      <h2>Student Login</h2>
+      <form action="/login" method="post">
+        <input type="email" name="email" id="email" placeholder="Enter your email" required>
+        <input type="password" name="password" id="password" placeholder="Enter your password" required>
+        <button type="submit">Login</button>
+        <a href="/">Not registered? Create an account</a>
+      </form>
+      <div class="footer-quote">
+        Every login is a fresh start 🌟
+      </div>
+    </div>
+  </div>
+</body>
+</html>

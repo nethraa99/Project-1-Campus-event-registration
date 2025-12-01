@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - Marwadi University</title>
+  <link rel="stylesheet" href="/style_home.css">
+</head>
+
+<body id="top">
+  <!-- ✅ Pro Navbar -->
+  <nav class="pro-nav">
+    <div class="nav-left">
+      <a href="/" class="brand">🎓 MU Events</a>
+    </div>
+
+    <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+
+    <div class="nav-center" id="mainMenu">
+      <a href="#top" class="nav-link">Home</a>
+      <a href="#notifications" class="nav-link">Notifications</a>
+      <a href="#events" class="nav-link">All Events</a>
+    </div>
+
+    <div class="nav-right">
+      <span class="greet">Hi, <%= student.name.split(' ')[0] %></span>
+      <div class="avatar" title="My Profile">
+        <%= (student.name && student.name[0] || ' U').toUpperCase() %>
+      </div>
+      <a href="/logout" class="btn-logout" title="Logout">Logout</a>
+    </div>
+  </nav>
+
+  <div class="main-content">
+    <h1>Welcome, <%= student.name %> 👋</h1>
+    <p>Check out all upcoming events and register!</p>
+
+    <!-- 🌟 Motivational Quote Banner -->
+    <% const quotes=[ "Opportunities are like sunrises 🌅. If you wait too long, you miss them.",
+      "Learn as if you will live forever, live like you will die tomorrow ✨",
+      "Every event is a chance to design your future 🎯",
+      "Don’t just attend events, create memories 🌸",
+      "Your smile is your best dress code today 😄" ]; 
+      const randomQuote=quotes[Math.floor(Math.random()*quotes.length)]; %>
+    <div class="quote-banner">“<%= randomQuote %>”</div>
+
+    <!-- 🔔 Notifications -->
+    <h2 id="notifications">🔔 Notifications</h2>
+    <div class="notifications-box">
+      <% let hasNotifications=false; const now=new Date(); events.forEach(event=> {
+        const eventDate=new Date(event.date);
+        const diffDays=Math.ceil((eventDate-now)/(1000*60*60*24));
+        if(diffDays>0 && diffDays<=3){ hasNotifications=true; %>
+          <p>⚠️ Registration for <strong><%= event.title %></strong> closes in <%= diffDays %> days!</p>
+      <% }}); %>
+
+      <% registrations.forEach(reg=> {
+        if(reg.status==='pending' && reg.event){ hasNotifications=true; %>
+          <p>⏳ Your registration for <strong><%= reg.event.title %></strong> is still pending approval.</p>
+      <% }}); %>
+
+      <% registrations.forEach(reg=> {
+        if(reg.status==='approved' && reg.event){ hasNotifications=true; %>
+          <p>✅ Congrats! Your registration for <strong><%= reg.event.title %></strong> is approved.</p>
+      <% }}); %>
+
+      <% registrations.forEach(reg=> {
+        if(reg.status==='rejected' && reg.event){ hasNotifications=true; %>
+          <p>❌ Sorry, your registration for <strong><%= reg.event.title %></strong> was rejected.</p>
+      <% }}); %>
+
+      <% if(!hasNotifications){ %>
+        <p>No new notifications 🎉</p>
+      <% } %>
+    </div>
+
+    <!-- 🔍 Search -->
+    <div class="filter-bar">
+      <input id="searchBox" type="text" placeholder="Search events...">
+    </div>
+
+    <!-- Layout (Upcoming left, Events right) -->
+    <div class="events-layout">
+
+      <!-- 🎯 Sidebar: Your Upcoming Events (Left) -->
+      <div class="sidebar reveal" id="upcoming">
+        <h3>📌 Your Upcoming Events</h3>
+        <% const upcoming=registrations.filter(r=> r.event && new Date(r.event.date)>=new Date() &&
+          (r.status==="approved"||r.status==="pending"))
+          .sort((a,b)=> new Date(a.event.date)-new Date(b.event.date)); %>
+        <% if(upcoming.length===0){ %>
+          <p>No upcoming events yet ⏳</p>
+          <p class="italic">“Don’t wait for the perfect moment, take the moment and make it perfect ✨.”</p>
+        <% } else { %>
+          <ul>
+            <% upcoming.forEach(r=> { %>
+              <li>
+                <strong><%= r.event.title %></strong><br>
+                <small><%= new Date(r.event.date).toLocaleDateString() %> | <%= r.event.location %></small><br>
+                <small>Status: <%= r.status %></small>
+              </li>
+            <% }) %>
+          </ul>
+        <% } %>
+        <hr>
+        <h4>💭 Today’s Thought</h4>
+        <% const thoughts=[ "The best way to predict the future is to create it 🚀.",
+          "Small progress is still progress 🌱.",
+          "Your vibe attracts your tribe ✨.",
+          "Keep calm, the weekend is coming 🎉." ]; 
+          const randomThought=thoughts[Math.floor(Math.random()*thoughts.length)]; %>
+        <p class="italic"><%= randomThought %></p>
+      </div>
+
+      <!-- 🌍 All Events (Right) -->
+      <div class="events-container" id="events">
+        <% if(events.length===0){ %>
+          <p>No events available at the moment.</p>
+        <% } else { events.forEach(event=> {
+          const registration=registrations.find(r=> r.event && r.event._id.toString()===event._id.toString());
+          const isPast = new Date(event.date) < new Date();
+        %>
+
+        <div class="event-card" data-title="<%= event.title.toLowerCase() %>">
+          <% if(event.poster){ %>
+            <img src="/uploads/<%= event.poster %>" alt="<%= event.title %>" class="event-image">
+          <% } else { %>
+            <img src="https://picsum.photos/600/400?random=<%= event._id %>" alt="Event Poster" class="event-image">
+          <% } %>
+
+          <div class="event-content">
+            <h3><%= event.title %></h3>
+            <p><%= event.description %></p>
+
+            <!-- 🔹 BADGES -->
+            <div class="badges">
+              <span class="badge category">🏷️ <%= event.category || "General" %></span>
+              <span class="badge location">📍 <%= event.location %></span>
+              <span class="badge datetime">🗓️ <%= new Date(event.date).toLocaleDateString() %> | 
+                <%= new Date(event.date).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) %>
+              </span>
+            </div>
+
+            <!-- Countdown -->
+            <p class="starts-in"><strong>Starts in:</strong> 
+              <span class="countdown" data-date="<%= new Date(event.date).toISOString() %>"></span>
+            </p>
+
+            <% if(registration){ %>
+              <p class="status">
+                <% if(registration.status==='pending'){ %> Pending Approval ⏳
+                <% } else if(registration.status==='approved'){ %> Approved ✅
+                <% } else if(registration.status==='rejected'){ %> Rejected ❌
+                <% } %>
+              </p>
+            <% } else if(isPast) { %>
+              <!-- 🔹 Event completed -->
+              <p class="status rejected">❌ Registration Closed</p>
+            <% } else { %>
+              <!-- 🔹 Open for registration -->
+              <button class="register-btn" 
+                      data-eventid="<%= event._id %>" 
+                      data-studentid="<%= student._id %>" 
+                      data-eventtitle="<%= event.title %>">
+                Register Now
+              </button>
+            <% } %>
+          </div>
+        </div>
+        <% }) } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Footer -->
+  <footer>
+    <div class="footer-container">
+      <p>© 2025 Marwadi University | Campus Events Portal</p>
+      <p>Made with ❤️ for Students | <a href="/">Home</a> | <a href="/register">Register</a> | <a href="/login">Login</a></p>
+    </div>
+  </footer>
+
+  <!-- Profile Modal -->
+  <div id="profileModal" class="modal profile-modal">
+    <div class="profile-box">
+      <span class="close-profile">&times;</span>
+      <h2>👤 My Profile</h2>
+      <p><strong>Name:</strong> <%= student.name %></p>
+      <p><strong>Email:</strong> <%= student.email %></p>
+      <p><strong>Section:</strong> <%= student.section %></p>
+    </div>
+  </div>
+
+  <!-- Registration Modal -->
+  <div id="registerModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h3 id="modalTitle">Register for Event</h3>
+      <form id="modalForm" method="post">
+        <input type="hidden" name="studentId" id="studentId">
+        <label>Name:</label>
+        <input type="text" value="<%= student.name %>" readonly><br>
+        <label>Email:</label>
+        <input type="text" value="<%= student.email %>" readonly><br>
+        <label>Section:</label>
+        <input type="text" value="<%= student.section %>" readonly><br>
+        <button type="submit">Submit Registration</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ✅ Scripts -->
+  <script>
+    // Countdown Timer
+    function updateCountdowns() {
+      document.querySelectorAll('.countdown').forEach(span => {
+        const eventDate = new Date(span.dataset.date);
+        const now = new Date();
+        const diff = eventDate - now;
+        if (diff <= 0) { span.textContent = "Started 🎉"; return; }
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+        span.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      });
+    }
+    setInterval(updateCountdowns, 1000); updateCountdowns();
+
+    // Live Search
+    document.getElementById('searchBox').addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      document.querySelectorAll('.event-card').forEach(card => {
+        card.style.display = card.dataset.title.includes(term) ? "block" : "none";
+      });
+    });
+
+    // Profile Modal
+    const profileModal=document.getElementById("profileModal");
+    const avatar=document.querySelector(".avatar");
+    const closeProfile=document.querySelector(".close-profile");
+    avatar.onclick=()=> profileModal.style.display="block";
+    closeProfile.onclick=()=> profileModal.style.display="none";
+    window.onclick=(e)=>{ if(e.target==profileModal) profileModal.style.display="none"; }
+
+    // Registration Modal
+    const regmodal=document.getElementById("registerModal");
+    const closeBtn=regmodal.querySelector(".close");
+    const modalForm=document.getElementById("modalForm");
+    const modalTitle=document.getElementById("modalTitle");
+    document.querySelectorAll(".register-btn").forEach(btn=>{
+      btn.onclick=()=>{
+        const eventId=btn.dataset.eventid, studentId=btn.dataset.studentid, eventTitle=btn.dataset.eventtitle;
+        modalTitle.textContent=`Register for ${eventTitle}`;
+        modalForm.action=`/registerEvent/${eventId}`;
+        document.getElementById("studentId").value=studentId;
+        regmodal.style.display="block";
+      }
+    });
+    closeBtn.onclick=()=> regmodal.style.display="none";
+    window.onclick=(e)=>{ if(e.target==regmodal) regmodal.style.display="none"; }
+  </script>
+</body>
+</html>

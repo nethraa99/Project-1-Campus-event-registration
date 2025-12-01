@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Events</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+  --primary:#1976D2;
+  --primary-dark:#0D47A1;
+  --accent:#FFC107;
+  --white:#ffffff;
+  --light:#f4f6f9;
+  --text-dark:#212121;
+  --text-light:#757575;
+  --shadow:0 4px 12px rgba(0,0,0,0.1);
+  --transition:all 0.3s ease;
+  --danger:#e53935;
+  --success:#2e7d32;
+}
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:var(--light);
+  margin:0;
+  padding:20px;
+  color:var(--text-dark);
+}
+
+h3{
+  color:var(--primary-dark);
+  text-align:center;
+  margin:10px 0;
+}
+
+hr{
+  border:none;
+  border-bottom:2px solid var(--primary);
+  width:60px;
+  margin:0 auto 20px;
+}
+
+.card{
+  background:var(--white);
+  padding:25px;
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  animation:fadeIn .6s ease;
+  max-width:1250px;
+  margin:0 auto;
+}
+
+/* Make table wrapper scrollable on small screens */
+.table-container{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+table{
+  width:100%;
+  min-width:800px;         /* ensures fixed layout */
+  border-collapse:collapse;
+  margin-top:15px;
+  font-size:0.95rem;
+  table-layout:fixed;      /* keeps columns consistent */
+}
+
+thead{
+  background:var(--primary);
+  color:var(--white);
+}
+
+th,td{
+  padding:12px 10px;
+  border-bottom:1px solid #ddd;
+  text-align:center;
+  vertical-align:middle;
+  word-break:break-word;
+}
+
+tbody tr:nth-child(even){background:#f9f9f9;}
+tbody tr:hover{background:#f1f8ff;transition:var(--transition);}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
+}
+
+.btn-edit,.btn-delete{
+  display:inline-block;
+  border:none;
+  border-radius:6px;
+  padding:6px 10px;
+  font-size:0.85rem;
+  cursor:pointer;
+  text-decoration:none;
+  transition:var(--transition);
+}
+.btn-edit{
+  background:var(--primary);
+  color:#fff;
+}
+.btn-edit:hover{
+  background:var(--primary-dark);
+  box-shadow:0 4px 10px rgba(25,118,210,0.3);
+}
+.btn-delete{
+  background:var(--danger);
+  color:#fff;
+}
+.btn-delete:hover{
+  background:#c62828;
+  box-shadow:0 4px 10px rgba(229,57,53,0.3);
+}
+
+/* status boxes etc. unchanged */
+.performance-box{background:#fff;padding:10px 12px;border-radius:8px;margin-top:5px;}
+.performance-box p{margin:2px 0;font-size:0.8rem;display:flex;justify-content:space-between;}
+.progress{height:6px;background:#eee;border-radius:4px;overflow:hidden;margin-top:4px;}
+.progress-bar{height:100%;transition:width .6s ease;}
+.progress-approved{background:#43A047;}
+.progress-rejected{background:#E53935;}
+.tag-upcoming,.tag-completed{display:inline-block;padding:3px 8px;font-size:0.75rem;font-weight:600;color:#fff;border-radius:10px;margin-bottom:4px;}
+.tag-upcoming{background:var(--success);}
+.tag-completed{background:var(--danger);}
+.section-breakdown{margin-top:6px;padding:6px;background:#f9f9f9;border-radius:6px;font-size:0.8rem;}
+
+/* Responsive fixes */
+@media(max-width:800px){
+  body{padding:10px;}
+  .card{padding:15px;}
+  table{min-width:650px;font-size:0.85rem;}
+}
+@media(max-width:500px){
+  table{min-width:600px;}
+  th,td{padding:8px 6px;}
+  .btn-edit,.btn-delete{padding:5px 8px;font-size:0.8rem;}
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  </style>
+</head>
+
+<body>
+  <h3>📅 Manage Events</h3>
+  <hr>
+
+  <div class="card">
+    <% if(events.length===0){ %>
+      <p>No events available to manage.</p>
+    <% } else { %>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Capacity</th>
+              <th>Status & Performance</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% events.forEach(event=>{ %>
+              <tr>
+                <td><%= event.title %></td>
+                <td><%= new Date(event.date).toDateString() %></td>
+                <td><%= event.location %></td>
+                <td><%= event.capacity %></td>
+                <td>
+                  <% if(event.isCompleted){ %>
+                    <span class="tag-completed">Completed</span>
+                  <% } else { %>
+                    <span class="tag-upcoming">Upcoming</span>
+                  <% } %>
+
+                  <div class="performance-box">
+                    <p><span class="metric-label total-label">👥 Total:</span><%= event.totalRegistrations %></p>
+                    <p><span class="metric-label approved-label">✅ Approved:</span><%= event.approvedPct %>% (<%= event.approvedCount %>)</p>
+                    <div class="progress"><div class="progress-bar progress-approved" style="width:<%= event.approvedPct %>%"></div></div>
+                    <p><span class="metric-label rejected-label">❌ Rejected:</span><%= event.rejectedPct %>% (<%= event.rejectedCount %>)</p>
+                    <div class="progress"><div class="progress-bar progress-rejected" style="width:<%= event.rejectedPct %>%"></div></div>
+                  </div>
+
+                  <% if(event.isCompleted){ %>
+                    <div class="section-breakdown">
+                      <h5>📊 Section Participation</h5>
+                      <ul>
+                        <% Object.keys(event.sectionCounts||{}).forEach(sec=>{ %>
+                          <li><strong><%= sec %></strong>: <%= event.sectionCounts[sec] %></li>
+                        <% }) %>
+                      </ul>
+                    </div>
+                  <% } %>
+                </td>
+                <td>
+                  <div class="actions">
+                    <a href="/editEvent/<%= event._id %>" class="btn-edit">✏️ Edit</a>
+                    <form action="/deleteEvent/<%= event._id %>" method="POST" onsubmit="return confirm('Delete this event?');">
+                      <button type="submit" class="btn-delete">🗑 Delete</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>

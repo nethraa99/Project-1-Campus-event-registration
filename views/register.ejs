@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Registration</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* === Theme Variables === */
+    :root {
+      --primary: #1976D2;     /* Default Blue */
+      /* Try other options:
+         --primary: #2ECC71;  Green
+         --primary: #6C5CE7;  Purple
+         --primary: #F39C12;  Orange */
+      --primary-dark: #125aa1;
+      --bg-light: #f5f6fa;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Left Split with Gradient & Animations */
+    .split-left {
+      flex: 1;
+      background: linear-gradient(135deg, rgba(25,118,210,0.8), rgba(18,90,161,0.8)),
+                  url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1000&q=80') no-repeat center/cover;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px;
+      font-size: 2rem;
+      line-height: 1.5;
+      animation: slideInLeft 1.5s ease-out;
+    }
+
+    .quote {
+      border-left: 4px solid white;
+      padding-left: 20px;
+      font-weight: 300;
+      max-width: 400px;
+      font-size: 1.4rem;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    .quote span {
+      font-weight: 600;
+      color: #FFD700;
+      animation: typing 4s steps(30, end), blink 0.75s step-end infinite;
+    }
+
+    /* Right Split */
+    .split-right {
+      flex: 1;
+      background: var(--bg-light);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: slideInRight 1.5s ease-out;
+    }
+
+    /* Form Card */
+    form {
+      background: white;
+      padding: 50px 40px;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      animation: popIn 1s ease-out;
+    }
+
+    form h2 {
+      margin: 0;
+      color: var(--primary);
+      font-weight: 600;
+      text-align: center;
+      font-size: 1.8rem;
+    }
+
+    form input {
+      padding: 14px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+    form input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(25,118,210,0.4);
+      transform: scale(1.02);
+    }
+
+    form button {
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+    form button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+
+    form a {
+      margin-top: 5px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    form a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive Layout */
+    @media(max-width: 900px) {
+      body { flex-direction: column; }
+      .split-left { font-size: 1.2rem; padding: 30px; }
+      form { padding: 30px; }
+    }
+
+    /* === Animations === */
+    @keyframes fadeIn {
+      0% {opacity: 0;}
+      100% {opacity: 1;}
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Left Side (Quote section) -->
+  <div class="split-left">
+    <div class="quote">
+      “<span>Education</span> is the passport to the future,  
+      for tomorrow belongs to those who prepare for it today.” 
+    </div>
+  </div>
+
+  <!-- Right Side (Form) -->
+  <div class="split-right">
+    <form action="/insert" method="post">
+      <h2>Create Account</h2>
+      <input type="text" name="name" id="name" placeholder="Enter your name" required>
+      <input type="email" name="email" id="email" placeholder="Enter your email" required>
+      <input type="password" name="password" id="password" placeholder="Enter your password" required>
+      <button type="submit">Register</button>
+      <a href="/login">Already registered? Login here..</a>
+    </form>
+  </div>
+</body>
+</html>

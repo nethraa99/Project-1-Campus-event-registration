@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Registrations</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1976D2;
+      --primary-dark: #0D47A1;
+      --accent: #FFC107;
+      --white: #ffffff;
+      --light: #f4f6f9;
+      --text-dark: #212121;
+      --text-light: #757575;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+      --danger: #e53935;
+      --success: #2e7d32;
+      --pending: #f4b400;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      padding: 20px;
+    }
+
+    h2 {
+      color: var(--primary-dark);
+      margin-bottom: 15px;
+    }
+
+    .card {
+      background: var(--white);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.6s ease;
+    }
+
+    .filter-box {
+      margin-bottom: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    thead {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+
+    tbody tr:nth-child(even) { background: #f9f9f9; }
+    tbody tr:hover { background: #f1f8ff; transition: var(--transition); }
+
+    /* Status Badges */
+    .badge {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: inline-block;
+      color: var(--white);
+    }
+    .badge-pending { background: var(--pending); color: #000; }
+    .badge-approved { background: var(--success); }
+    .badge-rejected { background: var(--danger); }
+
+    /* Buttons */
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+    }
+    .btn-approve {
+      background: var(--success);
+      color: var(--white);
+    }
+    .btn-approve:hover {
+      background: #1b5e20;
+      box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
+    }
+    .btn-reject {
+      background: var(--danger);
+      color: var(--white);
+    }
+    .btn-reject:hover {
+      background: #b71c1c;
+      box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3);
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    .table-container { overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h2>✅ Event Registrations</h2>
+  <hr>
+
+  <div class="card">
+    <% if (registrations.length === 0) { %>
+      <p>No registrations yet.</p>
+    <% } else { %>
+
+      <!-- ✅ Section Filter -->
+      <div class="filter-box">
+        <label for="sectionFilter"><strong>Filter by Section:</strong></label>
+        <select id="sectionFilter">
+          <option value="">All</option>
+          <% 
+            const uniqueSections = [...new Set(
+              registrations.map(r => (r.student && r.student.section) ? r.student.section : "Unknown")
+            )];
+            uniqueSections.forEach(sec => { 
+          %>
+            <option value="<%= sec.toLowerCase() %>"><%= sec %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <!-- ✅ Table -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>👤 Student Name</th>
+              <th>🎓 Section</th>
+              <th>📅 Event Title</th>
+              <th>📌 Status</th>
+              <th>⚙️ Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% registrations.forEach(reg => { %>
+              <tr data-section="<%= reg.student && reg.student.section ? reg.student.section.toLowerCase() : 'unknown' %>">
+                <td><%= reg.student ? reg.student.name : "❌ Deleted Student" %></td>
+                <td><%= reg.student ? reg.student.section : "Unknown" %></td>
+                <td><%= reg.event ? reg.event.title : "❌ Deleted Event" %></td>
+                <td>
+                  <% if(reg.status === 'pending') { %>
+                    <span class="badge badge-pending">⏳ Pending</span>
+                  <% } else if(reg.status === 'approved') { %>
+                    <span class="badge badge-approved">✅ Approved</span>
+                  <% } else if(reg.status === 'rejected') { %>
+                    <span class="badge badge-rejected">❌ Rejected</span>
+                  <% } %>
+                </td>
+                <td>
+                  <% if(reg.status === 'pending') { %>
+                    <div class="actions">
+                      <form action="/registrations/<%= reg._id %>/approve" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-approve">Approve ✅</button>
+                      </form>
+                      <form action="/registrations/<%= reg._id %>/reject" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-reject">Reject ❌</button>
+                      </form>
+                    </div>
+                  <% } else { %>
+                    <span style="color: var(--text-light);">N/A</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- ✅ Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const filterSelect = document.getElementById("sectionFilter");
+      const rows = document.querySelectorAll("tbody tr");
+
+      filterSelect.addEventListener("change", () => {
+        const filter = filterSelect.value.toLowerCase();
+        rows.forEach(row => {
+          const rowSection = (row.dataset.section || "unknown").toLowerCase();
+          row.style.display = (filter === "" || rowSection === filter) ? "" : "none";
+        });
+      });
+    });
+  </script>
+</body>
+</html>
